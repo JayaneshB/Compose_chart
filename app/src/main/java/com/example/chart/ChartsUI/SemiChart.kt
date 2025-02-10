@@ -1,4 +1,4 @@
-package com.example.chart
+package com.example.chart.ChartsUI
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.chart.WS
 import kotlin.math.cos
 import kotlin.math.sin
 
