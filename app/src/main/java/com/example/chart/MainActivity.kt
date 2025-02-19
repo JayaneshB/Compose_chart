@@ -38,20 +38,22 @@ class MainActivity : ComponentActivity() {
                 colors = listOf(Color.Red, Color.Green, Color.Cyan)
             )*/
 
-            /*DonutChart(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                progress = listOf(14f, 21f, 60f,44f,32f,5f),
-                colors = listOf(
-                    Color(0xFFbf95d4),
-                    Color(0xFFf4ac1a),
-                    Color(0xFF8b0a50),
-                    Color(0xFFF09480),
-                    Color(0xFF7BE7F9),
-                    Color(0xFFF7F727)
+            /*Column {
+                DonutChart(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    progress = listOf(14f, 21f, 60f,44f,32f,5f),
+                    colors = listOf(
+                        Color(0xFFbf95d4),
+                        Color(0xFFf4ac1a),
+                        Color(0xFF8b0a50),
+                        Color(0xFFF09480),
+                        Color(0xFF7BE7F9),
+                        Color(0xFFF7F727)
+                    )
                 )
-            )*/
+            }*/
         }
     }
 }
