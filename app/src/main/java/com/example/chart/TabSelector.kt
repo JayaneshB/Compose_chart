@@ -26,7 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 
 /*@Composable
@@ -121,7 +123,13 @@ fun TabItem(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(
-                color = if (isSelected) Color(0xFFE0F7E9) else Color.White
+                brush = if (isSelected) {
+                    Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFF6FDFA), Color(0xFFF5F7FD))
+                    )
+                } else {
+                    SolidColor(Color.White)
+                }
             )
             .clickable(onClick = onClick)
             .padding(vertical = 12.dp),

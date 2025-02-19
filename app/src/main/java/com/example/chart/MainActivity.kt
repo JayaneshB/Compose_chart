@@ -4,13 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.chart.ChartsUI.HalfSemiChart
@@ -73,19 +77,30 @@ fun ShowChart() {
         WS("ETF", 15, Color.Yellow)
     )
 
-    Card(
-        modifier = Modifier.wrapContentHeight(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE0F7E9)),
-        elevation = CardDefaults.elevatedCardElevation(2.dp)
+    Box(
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(Color(0xFFF6FDFA), Color(0xFFF5F7FD))
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
     ) {
-        Column {
-            TabSwitcher(
-                tabs = listOf("Asset", "Product")
-            ) { selectedTab ->
-                when (selectedTab) {
-                    "Asset" -> HalfSemiChart(assetSegments)
-                    "Product" -> HalfSemiChart(productSegments)
+        Card(
+            modifier = Modifier.wrapContentHeight(),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        ) {
+            Column {
+                TabSwitcher(
+                    tabs = listOf("Asset", "Product")
+                ) { selectedTab ->
+                    when (selectedTab) {
+                        "Asset" -> HalfSemiChart(assetSegments)
+                        "Product" -> HalfSemiChart(productSegments)
+                    }
                 }
             }
         }
