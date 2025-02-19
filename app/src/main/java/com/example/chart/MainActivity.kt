@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -67,8 +66,9 @@ fun ShowChart() {
 
     val productSegments = listOf(
         WS("Gold", 40, Color.Red),
-        WS("Real Estate", 30, Color.Blue),
-        WS("Commodities", 30, Color.Green)
+        WS("Real Estate", 25, Color.Blue),
+        WS("Commodities", 20, Color.Green),
+        WS("ETF", 15, Color.Yellow)
     )
 
     Card(

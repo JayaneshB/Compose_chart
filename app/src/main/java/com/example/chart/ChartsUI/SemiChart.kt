@@ -1,5 +1,7 @@
 package com.example.chart.ChartsUI
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +10,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +33,13 @@ fun HalfSemiChart(
     val totalPercentage = segments.sumOf { it.percentage }
     val normalizationFactor = if (totalPercentage == 0) 1f else 100f / totalPercentage
 
+    val pathPortion = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        pathPortion.snapTo(0f)
+        pathPortion.animateTo(1f, animationSpec = tween(1000)) // Animate all segments together
+    }
+
     Box(
         modifier = Modifier
             .offset(y = 100.dp)
@@ -43,11 +54,12 @@ fun HalfSemiChart(
         ) {
             var startAngle = 180f // Start at the top of the circle
             val strokeWidth = 80f
-            val radius = size.minDimension / 2// Radius of the chart
+            val radius = size.minDimension / 2 // Radius of the chart
 
+            // Draw all segments smoothly in one go
             segments.forEach { segment ->
                 val normalizedPercentage = segment.percentage * normalizationFactor
-                val sweepAngle = (180 * normalizedPercentage / 100)
+                val sweepAngle = (180 * normalizedPercentage / 100) * pathPortion.value // Scale sweep angle during animation
 
                 drawArc(
                     color = segment.color,
@@ -63,7 +75,7 @@ fun HalfSemiChart(
                 val x = center.x + labelRadius * cos(angle).toFloat()
                 val y = center.y + labelRadius * sin(angle).toFloat()
 
-                // Draw the text label
+                // Draw text labels
                 if (segment.percentage != 0) {
                     drawContext.canvas.nativeCanvas.apply {
                         val textPaint = android.graphics.Paint().apply {
@@ -82,7 +94,8 @@ fun HalfSemiChart(
                         drawText("${segment.percentage}%", x, y + 50, valueTextStyle)
                     }
                 }
-                startAngle += sweepAngle
+
+                startAngle += sweepAngle // Move to the next segment
             }
         }
         Column(
