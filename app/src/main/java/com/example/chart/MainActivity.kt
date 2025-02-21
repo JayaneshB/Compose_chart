@@ -65,16 +65,16 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ShowChart() {
     val assetSegments = listOf(
-        WS("Equity", 50, Color.Magenta),
-        WS("Debt", 20, Color.Yellow),
-        WS("Hybrid", 30, Color.Cyan)
+        WS("Equity", 5.5, Color.Magenta),
+        WS("Debt", 2.2, Color.Yellow),
+        WS("Hybrid", 3.3, Color.Cyan)
     )
 
     val productSegments = listOf(
-        WS("Gold", 40, Color.Red),
-        WS("Real Estate", 25, Color.Blue),
-        WS("Commodities", 20, Color.Green),
-        WS("ETF", 15, Color.Yellow)
+        WS("Gold", 0.05, Color.Red),
+        WS("Real Estate", 1.95, Color.Blue),
+        WS("Commodities", 8.4, Color.Green),
+        WS("ETF", 80.0, Color.Yellow)
     )
 
     Box(
@@ -109,6 +109,6 @@ fun ShowChart() {
 
 data class WS(
     val label: String,
-    val percentage: Int,
+    val percentage: Double,
     val color: Color
 )
