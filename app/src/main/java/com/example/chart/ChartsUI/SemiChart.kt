@@ -1,5 +1,6 @@
 package com.example.chart.ChartsUI
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -146,7 +147,12 @@ fun HalfSemiChart(segments: List<WS>) {
     val adjustedSegments = segments.map { segment ->
         val normalizedPercentage = segment.percentage * normalizationFactor
         val sweepAngle = (180.0 * normalizedPercentage / 100.0) // Convert 180f to 180.0
-        val adjustedSweepAngle = if (sweepAngle < minSweepAngle && segment.percentage > 0) minSweepAngle else sweepAngle
+
+        val adjustedSweepAngle = if (segment.percentage < 1) {
+            minSweepAngle
+        } else {
+            maxOf(sweepAngle, minSweepAngle) // Ensure sweepAngle is at least minSweepAngle
+        }
         segment to adjustedSweepAngle
     }
 
