@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -18,13 +19,20 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.chart.ChartsUI.HalfSemiChart
+import com.example.chart.ChartsUI.LinearProgressChart
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ShowChart()
+//            ShowChart()
+
+            LinearProgressChart(
+                credits = 2.5f,  // 2.5L
+                debits = 1.0f,   // 1.0L
+                modifier = Modifier.padding(16.dp)
+            )
 
             /*PieChart(modifier = Modifier
                        .weight(1f)
