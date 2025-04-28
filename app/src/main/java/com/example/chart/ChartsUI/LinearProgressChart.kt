@@ -95,7 +95,7 @@ fun LinearProgressChart(
                         modifier = Modifier
                             .fillMaxWidth(animatedProgress.value)
                             .height(16.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(5.dp))
                             .background(progressColor)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -103,7 +103,7 @@ fun LinearProgressChart(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(16.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(5.dp))
                             .background(backgroundColor)
                     )
                 }
