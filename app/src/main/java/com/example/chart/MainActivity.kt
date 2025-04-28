@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
 //            ShowChart()
 
             LinearProgressChart(
-                credits = 2.5f,  // 2.5L
-                debits = 1.0f,   // 1.0L
+                creditPercentage = 60f,  // 2.5L
+                debitPercentage = 40f,   // 1.0L
                 modifier = Modifier.padding(16.dp)
             )
 

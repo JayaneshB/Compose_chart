@@ -16,21 +16,30 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LinearProgressChart(
-    credits: Float,
-    debits: Float,
+    creditPercentage: Float,
+    debitPercentage: Float,
+    creditValue: String = "",
+    debitValue: String = "",
     modifier: Modifier = Modifier,
     progressColor: Color = Color(0xFF4CAF50),
     backgroundColor: Color = Color(0xFFFFAB91),
     animationDuration: Int = 1000
 ) {
-    val surplus = credits - debits
-    val percentage = ((surplus / credits) * 100).toInt()
+    // Validate and adjust percentages if they exceed 100%
+    val validatedCreditPercentage = creditPercentage.coerceIn(0f, 100f)
+    val validatedDebitPercentage = debitPercentage.coerceIn(0f, 100f - validatedCreditPercentage)
+    
+    val surplus = validatedCreditPercentage - validatedDebitPercentage
     
     val animatedProgress = remember { Animatable(0f) }
     
-    LaunchedEffect(credits, debits) {
+    LaunchedEffect(validatedCreditPercentage, validatedDebitPercentage) {
         animatedProgress.animateTo(
-            targetValue = credits / (credits + debits),
+            targetValue = when {
+                validatedDebitPercentage == 0f -> 1f
+                validatedCreditPercentage == 0f -> 0f
+                else -> validatedCreditPercentage / (validatedCreditPercentage + validatedDebitPercentage)
+            },
             animationSpec = tween(
                 durationMillis = animationDuration,
                 easing = FastOutSlowInEasing
@@ -45,12 +54,12 @@ fun LinearProgressChart(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Monthly Surplus ₹${String.format("%.1f", surplus)}L",
+                text = "Monthly Surplus ${if (creditValue.isNotEmpty()) creditValue else "${surplus.toInt()}%"}",
                 fontSize = 16.sp,
                 color = Color.Gray
             )
             Text(
-                text = "(${percentage}%)",
+                text = "(${surplus.toInt()}%)",
                 fontSize = 16.sp,
                 color = progressColor
             )
@@ -59,21 +68,46 @@ fun LinearProgressChart(
         Spacer(modifier = Modifier.height(16.dp))
         
         Row(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(animatedProgress.value)
-                    .height(16.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(progressColor)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(backgroundColor)
-            )
+            when {
+                // Show full width green bar when only credit exists
+                validatedDebitPercentage == 0f -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(progressColor)
+                    )
+                }
+                // Show full width orange bar when only debit exists
+                validatedCreditPercentage == 0f -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(backgroundColor)
+                    )
+                }
+                // Show split view when both values exist
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(animatedProgress.value)
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(progressColor)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(backgroundColor)
+                    )
+                }
+            }
         }
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -91,7 +125,7 @@ fun LinearProgressChart(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Credits ₹${String.format("%.1f", credits)}L",
+                    text = "Credits ${if (creditValue.isNotEmpty()) creditValue else "${validatedCreditPercentage.toInt()}%"}",
                     fontSize = 16.sp
                 )
             }
@@ -104,7 +138,7 @@ fun LinearProgressChart(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Debits ₹${String.format("%.1f", debits)}L",
+                    text = "Debits ${if (debitValue.isNotEmpty()) debitValue else "${validatedDebitPercentage.toInt()}%"}",
                     fontSize = 16.sp
                 )
             }
