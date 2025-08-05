@@ -6,9 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -24,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.chart.ChartsUI.DonutChart
 import com.example.chart.ChartsUI.HalfSemiChart
 import com.example.chart.ChartsUI.LinearProgressChart
 import com.example.chart.ChartsUI.PeriodPicker
@@ -43,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
             var showPicker by remember { mutableStateOf(false) }
 
-            PeriodPicker(
+            /*PeriodPicker(
                 showPicker = showPicker,
                 onDismiss = { showPicker = false },
                 onPeriodSelected = { selectedMonth ->
@@ -55,7 +60,7 @@ class MainActivity : ComponentActivity() {
 // To show the picker:
             Button(onClick = { showPicker = true }) {
                 Text("Show Period Picker")
-            }
+            }*/
             /*PieChart(modifier = Modifier
                        .weight(1f)
                        .fillMaxWidth(),
@@ -72,22 +77,55 @@ class MainActivity : ComponentActivity() {
                 colors = listOf(Color.Red, Color.Green, Color.Cyan)
             )*/
 
-            /*Column {
-                DonutChart(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    progress = listOf(14f, 21f, 60f,44f,32f,5f),
-                    colors = listOf(
-                        Color(0xFFbf95d4),
-                        Color(0xFFf4ac1a),
-                        Color(0xFF8b0a50),
-                        Color(0xFFF09480),
-                        Color(0xFF7BE7F9),
-                        Color(0xFFF7F727)
-                    )
-                )
-            }*/
+            Column {
+                BoxWithConstraints(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val chartSize = maxWidth * 0.5f  // 40% of available width
+
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(modifier = Modifier.background(Color.Cyan)) {
+                            DonutChart(
+                                modifier = Modifier.size(chartSize).background(Color.Red),
+                                progress = listOf(14f, 21f, 60f, 44f, 32f, 5f),
+                                colors = listOf(
+                                    Color(0xFFbf95d4),
+                                    Color(0xFFf4ac1a),
+                                    Color(0xFF8b0a50),
+                                    Color(0xFFF09480),
+                                    Color(0xFF7BE7F9),
+                                    Color(0xFFF7F727)
+                                )
+                            )
+                        }
+
+                    }
+                }
+            }
+
+
+//            Column {
+//                Row {
+//                    Spacer(modifier = Modifier.weight(1f))
+//
+//                    DonutChart(
+//                        modifier = Modifier
+//                            .size(300.dp)
+//                            .fillMaxWidth(),
+//                        progress = listOf(14f, 21f, 60f,44f,32f,5f),
+//                        colors = listOf(
+//                            Color(0xFFbf95d4),
+//                            Color(0xFFf4ac1a),
+//                            Color(0xFF8b0a50),
+//                            Color(0xFFF09480),
+//                            Color(0xFF7BE7F9),
+//                            Color(0xFFF7F727)
+//                        )
+//                    )
+//                }
+//            }
         }
     }
 }

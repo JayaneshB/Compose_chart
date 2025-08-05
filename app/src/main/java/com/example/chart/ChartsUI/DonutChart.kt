@@ -54,7 +54,7 @@ fun DonutChart(
     }
     BoxWithConstraints(modifier = modifier) {
         val sideSize = min(constraints.maxWidth - 10f, constraints.maxHeight - 10f)
-        val padding = (sideSize * 50) / 100f
+        val padding = (sideSize * 20) / 100f
         val pathPortion = remember {
             Animatable(initialValue = 0f)
         }
