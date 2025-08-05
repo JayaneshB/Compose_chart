@@ -11,15 +11,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.chart.ChartsUI.HalfSemiChart
 import com.example.chart.ChartsUI.LinearProgressChart
+import com.example.chart.ChartsUI.PeriodPicker
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,12 +35,27 @@ class MainActivity : ComponentActivity() {
         setContent {
 //            ShowChart()
 
-            LinearProgressChart(
-                creditPercentage = 60f,  // 2.5L
-                debitPercentage = 40f,   // 1.0L
-                modifier = Modifier.padding(16.dp)
+//            LinearProgressChart(
+//                creditPercentage = 60f,  // 2.5L
+//                debitPercentage = 40f,   // 1.0L
+//                modifier = Modifier.padding(16.dp)
+//            )
+
+            var showPicker by remember { mutableStateOf(false) }
+
+            PeriodPicker(
+                showPicker = showPicker,
+                onDismiss = { showPicker = false },
+                onPeriodSelected = { selectedMonth ->
+                    // Handle selected month
+                    showPicker = false
+                }
             )
 
+// To show the picker:
+            Button(onClick = { showPicker = true }) {
+                Text("Show Period Picker")
+            }
             /*PieChart(modifier = Modifier
                        .weight(1f)
                        .fillMaxWidth(),
