@@ -86,9 +86,9 @@ class MainActivity : ComponentActivity() {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Row(modifier = Modifier.background(Color.Cyan)) {
+                        Row {
                             DonutChart(
-                                modifier = Modifier.size(chartSize).background(Color.Red),
+                                modifier = Modifier.size(chartSize),
                                 progress = listOf(14f, 21f, 60f, 44f, 32f, 5f),
                                 colors = listOf(
                                     Color(0xFFbf95d4),
