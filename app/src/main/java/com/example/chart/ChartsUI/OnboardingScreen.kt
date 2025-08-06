@@ -1,5 +1,6 @@
 package com.example.chart.ChartsUI
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -16,7 +17,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,62 +52,85 @@ fun OnboardingScreen() {
 
     var currentPage by remember { mutableStateOf(0) }
 
-    // Auto-scroll
-    LaunchedEffect(currentPage) {
+    LaunchedEffect(key1 = currentPage) {
         if (currentPage < pages.lastIndex) {
             delay(5000)
             currentPage++
         }
     }
+    Column(modifier = Modifier.fillMaxSize()) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            SegmentedProgressBar(
-                totalSegments = pages.size,
-                currentSegment = currentPage
+        // Top Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                modifier = Modifier.clickable { /* Dismiss the screen logic */ }
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // ✅ Dynamic Page Content
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                OnboardingPageView(
-                    title = pages[currentPage].title,
-                    showButton = pages[currentPage].showButton
+            if (currentPage != pages.lastIndex) {
+                Text(
+                    text = "Skip",
+                    modifier = Modifier.clickable {
+                        currentPage = pages.lastIndex
+                    }
                 )
             }
         }
 
-        // ✅ Tap Zones (Back/Next)
-        Row(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        enabled = currentPage > 0
-                    ) { currentPage-- }
-            )
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        enabled = currentPage < pages.lastIndex
-                    ) { currentPage++ }
-            )
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Main Content
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                SegmentedProgressBar(
+                    totalSegments = pages.size,
+                    currentSegment = currentPage
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Dynamic Page Content
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    OnboardingPageView(
+                        title = pages[currentPage].title,
+                        showButton = pages[currentPage].showButton
+                    )
+                }
+            }
+
+            // Tap Zones (Back/Next)
+            Row(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            enabled = currentPage > 0
+                        ) { currentPage-- }
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            enabled = currentPage < pages.lastIndex
+                        ) { currentPage++ }
+                )
+            }
         }
     }
 }
@@ -196,7 +223,9 @@ fun OnboardingPageView(
 
         if (showButton) {
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = { /* TODO: Navigate or perform action */ }) {
+            Button(onClick = {
+
+            }) {
                 Text("Activate Now")
             }
         }
