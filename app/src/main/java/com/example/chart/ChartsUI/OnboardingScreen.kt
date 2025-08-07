@@ -1,10 +1,12 @@
 package com.example.chart.ChartsUI
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,28 +18,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -175,7 +180,6 @@ fun SegmentedProgressBar(
             ) {
                 when {
                     index < currentSegment -> {
-                        // Fully filled
                         Box(
                             modifier = Modifier
                                 .matchParentSize()
@@ -185,7 +189,6 @@ fun SegmentedProgressBar(
                     }
 
                     index == currentSegment -> {
-                        // Animate only if progress > threshold (to avoid green dot)
                         if (animatedProgress.value > 0.05f) {
                             Box(
                                 modifier = Modifier
@@ -196,8 +199,6 @@ fun SegmentedProgressBar(
                             )
                         }
                     }
-
-                    // Remaining segments: only background
                 }
             }
         }
@@ -210,23 +211,259 @@ fun OnboardingPageView(
     showButton: Boolean
 ) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            modifier = Modifier.padding(16.dp),
-            textAlign = TextAlign.Center
+            maxLines = 2,
+            softWrap = true
         )
 
         if (showButton) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Activate Now",
+                modifier = Modifier
+                    .background(Color(0xFF6A1B9A), shape = RoundedCornerShape(50))
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                color = Color.White
+            )
+        }
+    }
 
-            }) {
-                Text("Activate Now")
+}
+
+
+@Preview
+@Composable
+fun ViewPagerOnboardingScreen() {
+    val pages = listOf(
+        OnboardingPage("Your money is scattered"),
+        OnboardingPage("Introducing Money Vault"),
+        OnboardingPage("Why does it matter?"),
+        OnboardingPage("Is it safe though?"),
+        OnboardingPage("One view your finance deserves", showButton = true)
+    )
+
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { pages.size }
+    )
+    var isAutoScrollPaused by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState.currentPage, isAutoScrollPaused) {
+        if (!isAutoScrollPaused && pagerState.currentPage < pages.lastIndex) {
+            delay(5000)
+            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+        }
+    }
+
+    // UI
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+
+            // Top Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close",
+                    modifier = Modifier.clickable {
+
+                    }
+                )
+
+                if (pagerState.currentPage != pages.lastIndex) {
+                    Text(
+                        text = "Skip",
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(pages.lastIndex)
+                            }
+                        }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Progress Bar
+            NewSegmentedProgressBar(
+                totalSegments = pages.size,
+                currentSegment = pagerState.currentPage,
+                isPaused = isPaused
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Pager with tap zones and long-press handling
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        // Page content
+                        OnboardingPageView(
+                            title = pages[page].title,
+                            showButton = pages[page].showButton
+                        )
+
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .pointerInput(Unit) {
+                                        while (true) {
+                                            awaitPointerEventScope {
+                                                val down = awaitFirstDown()
+                                                isPaused = true
+                                                isAutoScrollPaused = true
+                                                val up = waitForUpOrCancellation()
+                                                isPaused = false
+                                                isAutoScrollPaused = false
+
+                                                if (up != null) {
+                                                    if (pagerState.currentPage > 0) {
+                                                        coroutineScope.launch {
+                                                            pagerState.animateScrollToPage(
+                                                                pagerState.currentPage - 1
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .pointerInput(Unit) {
+                                        while (true) {
+                                            awaitPointerEventScope {
+                                                val down = awaitFirstDown()
+                                                isPaused = true
+                                                isAutoScrollPaused = true
+                                                val up = waitForUpOrCancellation()
+                                                isPaused = false
+                                                isAutoScrollPaused = false
+
+                                                if (up != null) {
+                                                    if (pagerState.currentPage < pages.lastIndex) {
+                                                        coroutineScope.launch {
+                                                            pagerState.animateScrollToPage(
+                                                                pagerState.currentPage + 1
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+// Progress bar with animation
+@Composable
+fun NewSegmentedProgressBar(
+    totalSegments: Int,
+    currentSegment: Int,
+    segmentDurationMillis: Int = 5000,
+    isPaused: Boolean
+) {
+    val animatedProgress = remember { Animatable(0f) }
+
+    // Time tracking for pause/resume
+    var lastUpdateTime by remember { mutableStateOf(System.currentTimeMillis()) }
+    var progressFraction by remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(currentSegment) {
+        // Reset state on page change
+        progressFraction = 0f
+        animatedProgress.snapTo(0f)
+        lastUpdateTime = System.currentTimeMillis()
+    }
+
+    LaunchedEffect(isPaused, currentSegment) {
+        while (progressFraction < 1f && !isPaused) {
+            val currentTime = System.currentTimeMillis()
+            val delta = currentTime - lastUpdateTime
+            lastUpdateTime = currentTime
+
+            val progressDelta = delta.toFloat() / segmentDurationMillis
+            progressFraction += progressDelta
+            animatedProgress.snapTo(progressFraction.coerceAtMost(1f))
+
+            delay(16) // ~60 FPS
+        }
+    }
+
+    // UI
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        repeat(totalSegments) { index ->
+            val trackColor = Color.LightGray
+            val progressColor = Color(0xFF00796B)
+
+            val segmentModifier = Modifier
+                .weight(1f)
+                .height(6.dp)
+                .clip(RoundedCornerShape(50))
+
+            Box(modifier = segmentModifier.background(trackColor)) {
+                when {
+                    index < currentSegment -> {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clip(RoundedCornerShape(50))
+                                .background(progressColor)
+                        )
+                    }
+
+                    index == currentSegment -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(animatedProgress.value)
+                                .clip(RoundedCornerShape(50))
+                                .background(progressColor)
+                        )
+                    }
+                }
             }
         }
     }
