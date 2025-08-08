@@ -32,6 +32,7 @@ import com.example.chart.ChartsUI.DonutChart
 import com.example.chart.ChartsUI.HalfSemiChart
 import com.example.chart.ChartsUI.LinearProgressChart
 import com.example.chart.ChartsUI.PeriodPicker
+import com.example.chart.ChartsUI.ViewPagerOnboardingScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,33 +78,35 @@ class MainActivity : ComponentActivity() {
                 colors = listOf(Color.Red, Color.Green, Color.Cyan)
             )*/
 
-            Column {
-                BoxWithConstraints(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    val chartSize = maxWidth * 0.5f  // 40% of available width
+            ViewPagerOnboardingScreen()
 
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Row {
-                            DonutChart(
-                                modifier = Modifier.size(chartSize),
-                                progress = listOf(14f, 21f, 60f, 44f, 32f, 5f),
-                                colors = listOf(
-                                    Color(0xFFbf95d4),
-                                    Color(0xFFf4ac1a),
-                                    Color(0xFF8b0a50),
-                                    Color(0xFFF09480),
-                                    Color(0xFF7BE7F9),
-                                    Color(0xFFF7F727)
-                                )
-                            )
-                        }
-
-                    }
-                }
-            }
+//            Column {
+//                BoxWithConstraints(
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    val chartSize = maxWidth * 0.5f  // 40% of available width
+//
+//                    Row(modifier = Modifier.fillMaxWidth()) {
+//                        Spacer(modifier = Modifier.weight(1f))
+//
+//                        Row {
+//                            DonutChart(
+//                                modifier = Modifier.size(chartSize),
+//                                progress = listOf(14f, 21f, 60f, 44f, 32f, 5f),
+//                                colors = listOf(
+//                                    Color(0xFFbf95d4),
+//                                    Color(0xFFf4ac1a),
+//                                    Color(0xFF8b0a50),
+//                                    Color(0xFFF09480),
+//                                    Color(0xFF7BE7F9),
+//                                    Color(0xFFF7F727)
+//                                )
+//                            )
+//                        }
+//
+//                    }
+//                }
+//            }
 
 
 //            Column {

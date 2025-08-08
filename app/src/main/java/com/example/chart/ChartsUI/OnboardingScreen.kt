@@ -284,7 +284,7 @@ fun ViewPagerOnboardingScreen() {
      */
 
     LaunchedEffect(Unit) {
-        delay(2000)
+        delay(1000)
         while (true) {
             delay(5000)
             if (!isAutoScrollPaused && pagerState.currentPage < pages.lastIndex) {
